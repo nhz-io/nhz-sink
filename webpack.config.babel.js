@@ -16,6 +16,16 @@ var
   DEV_TEMPLATE            = 'template.html',
   GH_PAGES_TEMPLATE       = 'template.html',
 
+  DIST_MAIN               = 'index.es6',
+  DEV_MAIN                = 'main.jsx',
+  GH_PAGES_MAIN           = 'main.jsx',
+  TEST_MAIN               = 'index.es6',
+
+  DEV_CONFIG              = 'dev.es6',
+  DIST_CONFIG             = 'dist.es6',
+  GH_PAGES_CONFIG         = 'gh-pages.es6',
+  TEST_CONFIG             = 'test.es6',
+
   ROOT_PATH               = path.resolve(__dirname),
   SRC_PATH                = path.resolve(ROOT_PATH, SRC),
   DEV_PATH                = path.resolve(ROOT_PATH, DEV),
@@ -25,10 +35,10 @@ var
   CONFIG_PATH             = path.resolve(ROOT_PATH, CONFIG),
   NODE_MODULES_PATH       = path.resolve(ROOT_PATH, NODE_MODULES),
 
-  DIST_MAIN               = 'index.es6',
-  DEV_MAIN                = 'main.jsx',
-  GH_PAGES_MAIN           = 'main.jsx',
-  TEST_MAIN               = 'index.es6',
+  DEV_CONFIG_PATH         = path.resolve(CONFIG_PATH, DEV_CONFIG),
+  DIST_CONFIG_PATH        = path.resolve(CONFIG_PATH, DIST_CONFIG),
+  GH_PAGES_CONFIG_PATH    = path.resolve(CONFIG_PATH, GH_PAGES_CONFIG),
+  TEST_CONFIG_PATH        = path.resolve(CONFIG_PATH, TEST_CONFIG),
 
   DIST_ENTRY_PATH         = path.resolve(SRC_PATH, DIST_MAIN),
   DEV_ENTRY_PATH          = path.resolve(DEV_PATH, DEV_MAIN),
@@ -116,6 +126,7 @@ if(TARGET === DEV || TARGET === GH_PAGES) {
 
 if(TARGET === DEV) {
   config.entry = DEV_ENTRY_PATH;
+  config.resolve.alias.config = DEV_CONFIG_PATH;
   config.plugins = [
     new webpack.HotModuleReplacementPlugin(),
     new HtmlwebpackPlugin({
@@ -136,6 +147,7 @@ if(TARGET === DEV) {
 }
 
 if(TARGET === GH_PAGES) {
+  config.resolve.alias.config = GH_PAGES_CONFIG_PATH;
   config.entry = GH_PAGES_ENTRY_PATH;
 }
 
