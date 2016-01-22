@@ -3,312 +3,152 @@ var pkg = require('./package.json');
 var webpack = require('webpack');
 var HtmlwebpackPlugin = require('html-webpack-plugin');
 
+/** Constants */
 var
-  SRC                       = 'src',
-  DEV                       = 'dev',
-  GH_PAGES                  = 'gh-pages',
-  DIST                      = 'dist',
-  MAIN                      = 'main.jsx',
-  FSM                       = 'StateMachine.es6',
-  FSM_BROWSER               = 'FSM',
-  GENERATOR_BROWSER         = 'FSMGenerator',
-  GENERATOR                 = 'Generator.es6',
-  GENERATOR_DIST            = 'nhz-fsm-generator',
-  HOST                      = 'localhost',
-  TEMPLATE                  = 'template.html',
-  NODE_MODULES              = 'node_modules',
-  PORT                      = 9000,
+  SRC                     = 'src',
+  DEV                     = 'dev',
+  DIST                    = 'dist',
+  TEST                    = 'test',
+  GH_PAGES                = 'gh-pages',
+  CONFIG                  = 'config',
+  NODE_MODULES            = 'node_modules',
 
-  DEV_CONFIG                = 'dev.es6',
-  DIST_CONFIG               = 'dist.es6',
-  DIST_BROWSER_CONFIG       = 'dist-browser.es6',
-  GH_PAGES_CONFIG           = 'gh-pages.es6',
+  DEV_TEMPLATE            = 'template.html',
+  GH_PAGES_TEMPLATE       = 'template.html',
 
-  ROOT_PATH                 = path.resolve(__dirname),
-  SRC_PATH                  = path.resolve(ROOT_PATH, SRC),
-  DEV_PATH                  = path.resolve(ROOT_PATH, DEV),
-  DIST_PATH                 = path.resolve(ROOT_PATH, DIST),
-  FSM_PATH                  = path.resolve(SRC_PATH, FSM),
-  CONFIG_PATH               = path.resolve(ROOT_PATH, 'config'),
-  GENERATOR_PATH            = path.resolve(SRC_PATH, GENERATOR),
-  MAIN_SRC_PATH             = path.resolve(SRC_PATH, MAIN),
-  MAIN_DEV_PATH             = path.resolve(DEV_PATH, MAIN),
-  GH_PAGES_PATH             = path.resolve(ROOT_PATH, GH_PAGES),
-  DEV_TEMPLATE              = path.resolve(DEV_PATH, TEMPLATE),
-  GH_PAGES_TEMPLATE         = path.resolve(DEV_PATH, TEMPLATE),
-  NODE_MODULES_PATH         = path.resolve(ROOT_PATH, NODE_MODULES),
-  DEV_CONFIG_PATH           = path.resolve(CONFIG_PATH, DEV_CONFIG),
-  DIST_CONFIG_PATH          = path.resolve(CONFIG_PATH, DIST_CONFIG),
-  DIST_BROWSER_CONFIG_PATH  = path.resolve(CONFIG_PATH, DIST_BROWSER_CONFIG),
-  GH_PAGES_CONFIG_PATH      = path.resolve(CONFIG_PATH, GH_PAGES_CONFIG),
+  ROOT_PATH               = path.resolve(__dirname),
+  SRC_PATH                = path.resolve(ROOT_PATH, SRC),
+  DEV_PATH                = path.resolve(ROOT_PATH, DEV),
+  DIST_PATH               = path.resolve(ROOT_PATH, DIST),
+  TEST_PATH               = path.resolve(ROOT_PATH, TEST),
+  GH_PAGES_PATH           = path.resolve(ROOT_PATH, GH_PAGES),
+  CONFIG_PATH             = path.resolve(ROOT_PATH, CONFIG),
+  NODE_MODULES_PATH       = path.resolve(ROOT_PATH, NODE_MODULES),
 
-  TARGET                    = process.env.npm_lifecycle_event;
+  DIST_MAIN               = 'index.es6',
+  DEV_MAIN                = 'main.jsx',
+  GH_PAGES_MAIN           = 'main.jsx',
+  TEST_MAIN               = 'index.es6',
 
-if(TARGET === 'start') {
-  module.exports = {
-    resolve: {
-      extensions: [ "", ".js", ".jsx", ".es6" ],
-      alias: {
-        src: SRC_PATH,
-        config: DEV_CONFIG_PATH
-      }
-    },
+  DIST_ENTRY_PATH         = path.resolve(SRC_PATH, DIST_MAIN),
+  DEV_ENTRY_PATH          = path.resolve(DEV_PATH, DEV_MAIN),
+  GH_PAGES_ENTRY_PATH     = path.resolve(GH_PAGES_PATH, GH_PAGES_MAIN),
+  TEST_ENTRY_PATH         = path.resolve(TEST_PATH, TEST_MAIN),
 
-    devtool: 'eval-source-map',
+  DEV_TEMPLATE_PATH       = path.resolve(DEV_PATH, DEV_TEMPLATE),
+  GH_PAGES_TEMPLATE_PATH  = path.resolve(GH_PAGES_PATH, GH_PAGES_TEMPLATE),
 
-    entry: MAIN_DEV_PATH,
+  HOST                    = process.env.WEBPACK_NHZ_SINK_HOST || 'localhost',
+  PORT                    = process.env.WEBPACK_NHZ_SINK_PORT || 9000,
 
-    output: {
-      path: DIST_PATH,
-      filename: pkg.name + '.js'
-    },
+  TARGET                  = process.env.npm_lifecycle_event;
 
-    module: {
-      preLoaders: [
-        {
-          test: /\.(js|es6|jsx)$/,
-          loader: 'eslint-loader',
-          include: [ SRC_PATH, DEV_PATH, CONFIG_PATH ],
-          exclude: NODE_MODULES_PATH
-        },
-      ],
-      loaders: [
-        {
-          test: /\.(js|es6|jsx)$/,
-          loaders: ['react-hot', 'babel'],
-          include: [ SRC_PATH, DEV_PATH, CONFIG_PATH ]
-        },
-        {
-          test: /.*\.(gif|png|jpe?g|woff|ttf|svg|eot|json)(\?.+)?$/i,
-          loaders: [
-            'file?hash=sha512&digest=hex&name=[hash].[ext]'
-          ],
-          include: [ SRC_PATH, DEV_PATH, NODE_MODULES_PATH ]
-        },
-        {
-          test: /\.scss$/,
-          loaders: [ 'style', 'css', 'sass' ],
-          include: [ SRC_PATH, DEV_PATH, NODE_MODULES_PATH ]
-        }
-      ]
-    },
-
-    devServer: {
-      colors:true,
-      historyApiFallback: true,
-      hot: true,
-      inline: true,
-      progress: true,
-      host: HOST,
-      port: PORT
-    },
-
-    plugins: [
-      new webpack.HotModuleReplacementPlugin(),
-      new HtmlwebpackPlugin({
-        title: pkg.description + ' ' + pkg.version,
-        script: pkg.name + '.js',
-        template: DEV_TEMPLATE
-      })
-    ],
-
-    eslint: {
-      configFile: '.eslintrc'
+/** Common config */
+var config = {
+  resolve: {
+    extensions: [ "", ".js", ".es6" ],
+    alias: {
+      src: SRC_PATH,
+      config: CONFIG_PATH,
+      test: TEST_PATH,
+      dev: DEV_PATH
     }
+  },
+
+  devtool: 'eval-source-map',
+
+  output: {
+    filename: pkg.name + '.js'
+  },
+
+  module: {
+    preLoaders: [
+      {
+        test: /\.(js|es6)$/,
+        loader: 'eslint-loader',
+        include: [ SRC_PATH, DEV_PATH, CONFIG_PATH, TEST_PATH ],
+        exclude: NODE_MODULES_PATH
+      },
+    ],
+    loaders: [
+      {
+        test: /\.(js|es6)$/,
+        loaders: ['babel'],
+        include: [ SRC_PATH, DEV_PATH, CONFIG_PATH, TEST_PATH ]
+      },
+      {
+        test: /\.((?!(js|es6)).)+$/i,
+        loaders: [
+          'file?hash=sha512&digest=hex&name=[hash].[ext]'
+        ],
+        include: [ SRC_PATH, DEV_PATH, CONFIG_PATH, TEST_PATH, NODE_MODULES_PATH ]
+      }
+    ]
+  },
+
+  eslint: {
+    configFile: '.eslintrc'
   }
 }
 
-if(TARGET === 'dist') {
-  module.exports = {
-    resolve: {
-      extensions: [ "", ".js", ".jsx", ".es6" ],
-      alias: {
-        src: SRC_PATH,
-        config: DIST_CONFIG_PATH
-      }
+/** Targets */
+if(TARGET === DEV || TARGET === GH_PAGES) {
+  config.module.loaders = [
+    {
+      test: /\.(js|es6|jsx)$/,
+      loaders: ['react-hot', 'babel'],
+      include: [ SRC_PATH, DEV_PATH, CONFIG_PATH, TEST_PATH ]
     },
-
-    externals: (function(externals = {}) {
-      for(let key in pkg.dependencies) { externals[key] = key };
-      return externals;
-    }()),
-
-    entry: (function(entry = {}) {
-      entry[pkg.name] = entry[pkg.name + '.min'] = FSM_PATH;
-      entry[GENERATOR_DIST] = entry[GENERATOR_DIST + '.min'] = GENERATOR_PATH;
-      return entry;
-    }()),
-
-    output: {
-      path: DIST_PATH,
-      filename: "[name].js",
-      libraryTarget: 'commonjs2',
-      library: true
+    {
+      test: /\.scss$/,
+      loaders: [ 'style', 'css', 'sass' ],
+      include: [ SRC_PATH, DEV_PATH, NODE_MODULES_PATH ]
     },
-
-    module: {
-      preLoaders: [
-        {
-          test: /\.(js|es6|jsx)$/,
-          loader: 'eslint-loader',
-          include: [ SRC_PATH, CONFIG_PATH ],
-          exclude: NODE_MODULES_PATH
-        },
-      ],
-
+    {
+      test: /\.((?!(js|es6|scss)).)+$/i,
       loaders: [
-        {
-          test: /\.(js|es6|jsx)$/,
-          loader: 'babel',
-          include: [ SRC_PATH, CONFIG_PATH ],
-          exclude: NODE_MODULES_PATH
-        }
-      ]
-    },
-
-    plugins: [
-      new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin({
-        minimize: true,
-        include: /\.min\.js$/,
-        mangle: {
-            except: ['$super', '$', 'exports', 'require']
-        }
-      })
-    ],
-
-    eslint: {
-      configFile: '.eslintrc'
+        'file?hash=sha512&digest=hex&name=[hash].[ext]'
+      ],
+      include: [ SRC_PATH, DEV_PATH, CONFIG_PATH, TEST_PATH, NODE_MODULES_PATH ]
     }
-  }
+  ]
 }
 
-if(TARGET === 'dist-browser') {
-  module.exports = {
-    resolve: {
-      extensions: [ "", ".js", ".jsx", ".es6" ],
-      alias: {
-        src: SRC_PATH,
-        config: DIST_BROWSER_CONFIG_PATH
-      }
-    },
-
-    entry: (function(entry = {}) {
-      entry[pkg.name] = entry[pkg.name + '.min'] = FSM_PATH;
-      entry[GENERATOR_DIST] = entry[GENERATOR_DIST + '.min'] = GENERATOR_PATH;
-      return entry;
-    }()),
-
-    output: {
-      path: DIST_PATH,
-      filename: "[name].js",
-      libraryTarget: 'this',
-    },
-
-    module: {
-      preLoaders: [
-        {
-          test: /\.(js|es6|jsx)$/,
-          loader: 'eslint-loader',
-          include: [ SRC_PATH, CONFIG_PATH ],
-          exclude: NODE_MODULES_PATH
-        },
-      ],
-
-      loaders: [
-        {
-          test: /\.(js|es6|jsx)$/,
-          loader: 'babel',
-          include: [ SRC_PATH, CONFIG_PATH ],
-          exclude: NODE_MODULES_PATH
-        }
-      ]
-    },
-
-    plugins: [
-      new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin({
-        minimize: true,
-        include: /\.min\.js$/,
-        mangle: {
-            except: ['$super', '$', 'exports', 'require']
-        }
-      })
-    ],
-
-    eslint: {
-      configFile: '.eslintrc'
-    }
-  }
+if(TARGET === DEV) {
+  config.entry = DEV_ENTRY_PATH;
+  config.plugins = [
+    new webpack.HotModuleReplacementPlugin(),
+    new HtmlwebpackPlugin({
+      title: pkg.description + ' ' + pkg.version,
+      script: pkg.name + '.js',
+      template: DEV_TEMPLATE_PATH
+    })
+  ];
+  config.devServer = {
+    colors:true,
+    historyApiFallback: true,
+    hot: true,
+    inline: true,
+    progress: true,
+    host: HOST,
+    port: PORT
+  };
 }
 
-
-if(TARGET === 'gh-pages') {
-  module.exports = {
-    resolve: {
-      extensions: [ "", ".js", ".jsx", ".es6" ],
-      alias: {
-        src: SRC_PATH,
-        config: GH_PAGES_CONFIG_PATH
-      }
-    },
-
-    entry: MAIN_DEV_PATH,
-
-    output: {
-      path: GH_PAGES_PATH,
-      filename: pkg.name + ".js"
-    },
-
-    module: {
-      preLoaders: [
-        {
-          test: /\.(js|es6|jsx)$/,
-          loader: 'eslint-loader',
-          include: [ SRC_PATH, DEV_PATH, CONFIG_PATH ],
-          exclude: NODE_MODULES_PATH
-        },
-      ],
-
-      loaders: [
-        {
-          test: /\.(js|es6|jsx)$/,
-          loaders: ['babel'],
-          include: [ SRC_PATH, DEV_PATH, CONFIG_PATH ],
-          exclude: NODE_MODULES_PATH
-        },
-        {
-          test: /.*\.(gif|png|jpe?g|woff|ttf|svg|eot|json)(\?.+)?$/i,
-          loaders: [
-            'file?hash=sha512&digest=hex&name=[hash].[ext]'
-          ],
-          include: [ SRC_PATH, DEV_PATH, path.resolve(ROOT_PATH, NODE_MODULES_PATH) ]
-        },
-        {
-          test: /\.scss$/,
-          loaders: [ 'style', 'css', 'sass' ],
-          include: [ SRC_PATH, DEV_PATH, path.resolve(ROOT_PATH, NODE_MODULES_PATH) ]
-        }
-      ]
-    },
-
-    plugins: [
-      new HtmlwebpackPlugin({
-        title: pkg.description + ' ' + pkg.version,
-        script: pkg.name + ".js",
-        template: GH_PAGES_TEMPLATE
-      }),
-      new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin({
-        minimize: true,
-        mangle: {
-            except: ['$super', '$', 'exports', 'require']
-        }
-      })
-    ],
-
-    eslint: {
-      configFile: '.eslintrc'
-    }
-  }
+if(TARGET === GH_PAGES) {
+  config.entry = GH_PAGES_ENTRY_PATH;
 }
+
+if(TARGET === DIST) {
+  config.entry = DIST_ENTRY_PATH
+}
+
+if(TARGET === TEST) {
+  config.entry = TEST_ENTRY_PATH
+}
+
+if(TARGET === GH_PAGES) {
+  config.entry = GH_PAGES_ENTRY_PATH
+}
+
+module.exports = config;
