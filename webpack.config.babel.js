@@ -37,16 +37,16 @@ var
 
   DEV_CONFIG_PATH         = path.resolve(CONFIG_PATH, DEV_CONFIG),
   DIST_CONFIG_PATH        = path.resolve(CONFIG_PATH, DIST_CONFIG),
-  GH_PAGES_CONFIG_PATH    = path.resolve(CONFIG_PATH, GH_PAGES_CONFIG),
+  GH_PAGES_CONFIG_PATH    = DEV_CONFIG_PATH,
   TEST_CONFIG_PATH        = path.resolve(CONFIG_PATH, TEST_CONFIG),
 
   DIST_ENTRY_PATH         = path.resolve(SRC_PATH, DIST_MAIN),
   DEV_ENTRY_PATH          = path.resolve(DEV_PATH, DEV_MAIN),
-  GH_PAGES_ENTRY_PATH     = path.resolve(GH_PAGES_PATH, GH_PAGES_MAIN),
+  GH_PAGES_ENTRY_PATH     = DEV_ENTRY_PATH,
   TEST_ENTRY_PATH         = path.resolve(TEST_PATH, TEST_MAIN),
 
   DEV_TEMPLATE_PATH       = path.resolve(DEV_PATH, DEV_TEMPLATE),
-  GH_PAGES_TEMPLATE_PATH  = path.resolve(GH_PAGES_PATH, GH_PAGES_TEMPLATE),
+  GH_PAGES_TEMPLATE_PATH  = DEV_TEMPLATE_PATH,
 
   HOST                    = process.env.WEBPACK_NHZ_SINK_HOST || 'localhost',
   PORT                    = process.env.WEBPACK_NHZ_SINK_PORT || 9000,
@@ -147,8 +147,24 @@ if(TARGET === DEV) {
 }
 
 if(TARGET === GH_PAGES) {
-  config.resolve.alias.config = GH_PAGES_CONFIG_PATH;
   config.entry = GH_PAGES_ENTRY_PATH;
+  config.resolve.alias.config = GH_PAGES_CONFIG_PATH;
+  config.module.loaders[0].loaders = ['babel'];
+  config.output.path = GH_PAGES_PATH;
+  config.plugins = [
+    new HtmlwebpackPlugin({
+      title: pkg.description + ' ' + pkg.version,
+      script: pkg.name + ".js",
+      template: GH_PAGES_TEMPLATE_PATH
+    }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      minimize: true,
+      mangle: {
+          except: ['$super', '$', 'exports', 'require']
+      }
+    })
+  ];
 }
 
 if(TARGET === DIST) {
@@ -162,5 +178,7 @@ if(TARGET === TEST) {
 if(TARGET === GH_PAGES) {
   config.entry = GH_PAGES_ENTRY_PATH
 }
+
+console.log(JSON.stringify(config, null, 2));
 
 module.exports = config;
