@@ -56,7 +56,7 @@ var
 /** Common config */
 var config = {
   resolve: {
-    extensions: [ "", ".js", ".es6" ],
+    extensions: [ "", ".js", ".es6", ".jsx" ],
     alias: {
       src: SRC_PATH,
       config: CONFIG_PATH,
@@ -65,8 +65,6 @@ var config = {
     }
   },
 
-  devtool: 'eval-source-map',
-
   output: {
     filename: pkg.name + '.js'
   },
@@ -74,7 +72,7 @@ var config = {
   module: {
     preLoaders: [
       {
-        test: /\.(js|es6)$/,
+        test: /\.(js|es6|jsx)$/,
         loader: 'eslint-loader',
         include: [ SRC_PATH, DEV_PATH, CONFIG_PATH, TEST_PATH ],
         exclude: NODE_MODULES_PATH
@@ -82,12 +80,17 @@ var config = {
     ],
     loaders: [
       {
-        test: /\.(js|es6)$/,
+        test: /\.(js|es6|jsx)$/,
         loaders: ['babel'],
         include: [ SRC_PATH, DEV_PATH, CONFIG_PATH, TEST_PATH ]
       },
       {
-        test: /\.((?!(js|es6)).)+$/i,
+        test: /\.(scss|sass)$/,
+        loaders: [ 'style', 'css', 'sass' ],
+        include: [ SRC_PATH, DEV_PATH, CONFIG_PATH, TEST_PATH, NODE_MODULES_PATH ]
+      },
+      {
+        test: /\.((?!(js|es6|jsx|scss|sass)).)+$/i,
         loaders: [
           'file?hash=sha512&digest=hex&name=[hash].[ext]'
         ],
@@ -102,30 +105,10 @@ var config = {
 }
 
 /** Targets */
-if(TARGET === DEV || TARGET === GH_PAGES) {
-  config.module.loaders = [
-    {
-      test: /\.(js|es6|jsx)$/,
-      loaders: ['react-hot', 'babel'],
-      include: [ SRC_PATH, DEV_PATH, CONFIG_PATH, TEST_PATH ]
-    },
-    {
-      test: /\.scss$/,
-      loaders: [ 'style', 'css', 'sass' ],
-      include: [ SRC_PATH, DEV_PATH, NODE_MODULES_PATH ]
-    },
-    {
-      test: /\.((?!(js|es6|scss)).)+$/i,
-      loaders: [
-        'file?hash=sha512&digest=hex&name=[hash].[ext]'
-      ],
-      include: [ SRC_PATH, DEV_PATH, CONFIG_PATH, TEST_PATH, NODE_MODULES_PATH ]
-    }
-  ]
-}
-
 if(TARGET === DEV) {
   config.entry = DEV_ENTRY_PATH;
+  config.devtool = 'eval-source-map';
+  config.module.loaders[0].loaders = ['react-hot', 'babel'];
   config.resolve.alias.config = DEV_CONFIG_PATH;
   config.plugins = [
     new webpack.HotModuleReplacementPlugin(),
@@ -135,6 +118,7 @@ if(TARGET === DEV) {
       template: DEV_TEMPLATE_PATH
     })
   ];
+
   config.devServer = {
     colors:true,
     historyApiFallback: true,
@@ -149,15 +133,17 @@ if(TARGET === DEV) {
 if(TARGET === GH_PAGES) {
   config.entry = GH_PAGES_ENTRY_PATH;
   config.resolve.alias.config = GH_PAGES_CONFIG_PATH;
-  config.module.loaders[0].loaders = ['babel'];
+  config.module.loaders[0].include.push(NODE_MODULES_PATH);
   config.output.path = GH_PAGES_PATH;
   config.plugins = [
+    new webpack.optimize.DedupePlugin(),
+
     new HtmlwebpackPlugin({
       title: pkg.description + ' ' + pkg.version,
       script: pkg.name + ".js",
       template: GH_PAGES_TEMPLATE_PATH
     }),
-    new webpack.optimize.DedupePlugin(),
+
     new webpack.optimize.UglifyJsPlugin({
       minimize: true,
       mangle: {
@@ -175,10 +161,6 @@ if(TARGET === TEST) {
   config.entry = TEST_ENTRY_PATH
 }
 
-if(TARGET === GH_PAGES) {
-  config.entry = GH_PAGES_ENTRY_PATH
-}
-
-console.log(JSON.stringify(config, null, 2));
+console.log(JSON.stringify(config,null,2));
 
 module.exports = config;

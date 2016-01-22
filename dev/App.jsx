@@ -48,7 +48,7 @@ export default class Main extends Base {
     super(props);
     this.state = {
       muiTheme                 : ThemeManager.getMuiTheme(LightRawTheme),
-      appTitle                 : 'SINKER'
+      appTitle                 : 'SINKER',
     };
     this.bindHandlers(/^_handle[A-Z]/, Main.prototype);
   }
