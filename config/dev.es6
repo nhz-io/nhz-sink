@@ -1,7 +1,6 @@
 import config from './common.es6';
 export default Object.assign({}, config, {
-    repoName              : 'nhz-fsm',
-    githubUrl             : 'https://github.com/nhz-io/nhz-fsm',
-    appTitle              : 'State Machine Editor',
-    stateMachinesStoreKey : 'fsm-store',
+    repoName              : 'nhz-sink',
+    githubUrl             : 'https://github.com/nhz-io/nhz-sink',
+    appTitle              : 'SINKER',
 });
