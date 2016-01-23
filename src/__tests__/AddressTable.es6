@@ -4,4 +4,4 @@ describe('AddressTable', function() {
   it('should be a class', function() {
     expect((new AddressTable) instanceof AddressTable).toBe(true);
   })
-})
+});
