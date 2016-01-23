@@ -1,4 +1,4 @@
-export default class AddressTable {
+export default class TokenTable {
   constructor(props) {
 
   }
