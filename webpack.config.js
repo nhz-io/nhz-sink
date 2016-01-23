@@ -152,14 +152,12 @@ if(TARGET === GH_PAGES) {
 }
 
 if(TARGET === DIST || TARGET === TEST || TARGET === COVERAGE) {
-  config.entry = (function(entry) {
-    entry = {};
+  config.entry = (function(entry = {}) {
     entry[pkg.name] = entry[pkg.name + '.min'] = DIST_ENTRY_PATH;
     return entry;
   }());
   config.resolve.alias.config = DIST_CONFIG_PATH;
-  config.externals = (function(externals) {
-    externals = {};
+  config.externals = (function(externals = {}) {
     for(var key in pkg.dependencies) { externals[key] = key };
     return externals;
   }());

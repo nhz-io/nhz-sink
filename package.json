@@ -25,7 +25,7 @@
   ],
   "main": "dist/nhz-sink.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --no-cache",
     "coverage": "jest --coverage",
     "start": "npm run-script dev",
     "travis": "npm run-script dist && npm run-script test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
@@ -103,6 +103,7 @@
     "uuid": "^2.0.1",
     "validator": "^4.5.0",
     "webpack": "^1.12.9",
-    "webpack-dev-server": "^1.14.0"
+    "webpack-dev-server": "^1.14.0",
+    "jest-webpack-alias": "git+https://github.com/nhz-io/jest-webpack-alias"
   }
 }
