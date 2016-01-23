@@ -56,6 +56,7 @@ var
 /** Common config */
 var config = {
   resolve: {
+    root: ROOT_PATH,
     extensions: [ "", ".js", ".es6", ".jsx" ],
     alias: {
       src: SRC_PATH,
@@ -150,12 +151,14 @@ if(TARGET === GH_PAGES) {
 }
 
 if(TARGET === DIST) {
-  config.entry = (function(entry = {}) {
+  config.entry = (function(entry) {
+    entry = {};
     entry[pkg.name] = entry[pkg.name + '.min'] = DIST_ENTRY_PATH;
     return entry;
   }());
   config.resolve.alias.config = DIST_CONFIG_PATH;
-  config.externals = (function(externals = {}) {
+  config.externals = (function(externals) {
+    externals = {};
     for(var key in pkg.dependencies) { externals[key] = key };
     return externals;
   }());
