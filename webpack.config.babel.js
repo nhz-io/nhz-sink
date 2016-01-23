@@ -130,7 +130,7 @@ if(TARGET === DEV) {
   };
 }
 
-if(TARGET === GH_PAGES) {
+else if(TARGET === GH_PAGES) {
   config.entry = GH_PAGES_ENTRY_PATH;
   config.resolve.alias.config = GH_PAGES_CONFIG_PATH;
   config.module.loaders[0].include.push(NODE_MODULES_PATH);
@@ -151,7 +151,7 @@ if(TARGET === GH_PAGES) {
   ];
 }
 
-if(TARGET === DIST || TARGET === TEST || TARGET === COVERAGE) {
+else {
   config.entry = (function(entry = {}) {
     entry[pkg.name] = entry[pkg.name + '.min'] = DIST_ENTRY_PATH;
     return entry;
