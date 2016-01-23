@@ -59,7 +59,6 @@ var config = {
     extensions: [ "", ".js", ".es6", ".jsx" ],
     alias: {
       src: SRC_PATH,
-      config: CONFIG_PATH,
       test: TEST_PATH,
       dev: DEV_PATH
     }
@@ -118,7 +117,6 @@ if(TARGET === DEV) {
       template: DEV_TEMPLATE_PATH
     })
   ];
-
   config.devServer = {
     colors:true,
     historyApiFallback: true,
@@ -137,13 +135,11 @@ if(TARGET === GH_PAGES) {
   config.output.path = GH_PAGES_PATH;
   config.plugins = [
     new webpack.optimize.DedupePlugin(),
-
     new HtmlwebpackPlugin({
       title: pkg.description + ' ' + pkg.version,
       script: pkg.name + ".js",
       template: GH_PAGES_TEMPLATE_PATH
     }),
-
     new webpack.optimize.UglifyJsPlugin({
       minimize: true,
       mangle: {
@@ -154,13 +150,35 @@ if(TARGET === GH_PAGES) {
 }
 
 if(TARGET === DIST) {
-  config.entry = DIST_ENTRY_PATH
+  config.entry = (function(entry = {}) {
+    entry[pkg.name] = entry[pkg.name + '.min'] = DIST_ENTRY_PATH;
+    return entry;
+  }());
+  config.resolve.alias.config = DIST_CONFIG_PATH;
+  config.externals = (function(externals = {}) {
+    for(var key in pkg.dependencies) { externals[key] = key };
+    return externals;
+  }());
+  config.output = {
+    path: DIST_PATH,
+    filename: "[name].js",
+    libraryTarget: 'commonjs2',
+    library: true
+  };
+  config.plugins = [
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      minimize: true,
+      include: /\.min\.js$/,
+      mangle: {
+          except: ['$super', '$', 'exports', 'require']
+      }
+    })
+  ];
 }
 
 if(TARGET === TEST) {
   config.entry = TEST_ENTRY_PATH
 }
-
-console.log(JSON.stringify(config,null,2));
 
 module.exports = config;
