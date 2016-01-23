@@ -25,10 +25,10 @@
   ],
   "main": "dist/nhz-sink.js",
   "scripts": {
-    "test": "jest --no-cache",
+    "test": "jest",
     "coverage": "jest --coverage",
     "start": "npm run-script dev",
-    "travis": "npm run-script dist && npm run-script test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "travis": "npm run-script dist && npm run-script coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "dev": "node node_modules/webpack-dev-server/bin/webpack-dev-server.js",
     "dist": "node node_modules/webpack/bin/webpack.js",
     "dist-browser": "node node_modules/webpack/bin/webpack.js",
@@ -43,7 +43,6 @@
     ]
   },
   "jest": {
-    "collectCoverage": true,
     "scriptPreprocessor": "<rootDir>/preprocessor.js",
     "testPathDirs": [
       "<rootDir>/src",
@@ -61,6 +60,9 @@
       "<rootDir>/node_modules/react-addons-test-utils",
       "<rootDir>/node_modules/fbjs"
     ]
+  },
+  "jest-webpack-alias": {
+    "configFile": "webpack.config.babel.js"
   },
   "license": "MIT",
   "devDependencies": {
