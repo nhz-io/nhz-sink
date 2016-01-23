@@ -28,6 +28,7 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "start": "npm run-script dev",
+    "travis": "npm run-script dist && npm run-script test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "dev": "node node_modules/webpack-dev-server/bin/webpack-dev-server.js",
     "dist": "node node_modules/webpack/bin/webpack.js",
     "dist-browser": "node node_modules/webpack/bin/webpack.js",

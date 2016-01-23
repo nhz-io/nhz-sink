@@ -8,4 +8,5 @@ src
 test
 dev
 webpack.config.babel.js
+coverage
 gh-pages
