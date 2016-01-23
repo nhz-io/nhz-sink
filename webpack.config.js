@@ -150,7 +150,7 @@ if(TARGET === GH_PAGES) {
   ];
 }
 
-if(TARGET === DIST) {
+if(TARGET === DIST || TARGET === TEST) {
   config.entry = (function(entry) {
     entry = {};
     entry[pkg.name] = entry[pkg.name + '.min'] = DIST_ENTRY_PATH;
@@ -178,10 +178,6 @@ if(TARGET === DIST) {
       }
     })
   ];
-}
-
-if(TARGET === TEST) {
-  config.entry = TEST_ENTRY_PATH
 }
 
 module.exports = config;
