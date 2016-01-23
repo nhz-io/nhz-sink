@@ -9,6 +9,7 @@ var
   DEV                     = 'dev',
   DIST                    = 'dist',
   TEST                    = 'test',
+  COVERAGE                = 'coverate',
   GH_PAGES                = 'gh-pages',
   CONFIG                  = 'config',
   NODE_MODULES            = 'node_modules',
@@ -150,7 +151,7 @@ if(TARGET === GH_PAGES) {
   ];
 }
 
-if(TARGET === DIST || TARGET === TEST) {
+if(TARGET === DIST || TARGET === TEST || TARGET === COVERAGE) {
   config.entry = (function(entry) {
     entry = {};
     entry[pkg.name] = entry[pkg.name + '.min'] = DIST_ENTRY_PATH;
