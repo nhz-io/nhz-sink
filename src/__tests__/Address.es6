@@ -62,4 +62,78 @@ describe('Address', function() {
       expect(address.full()).toBe(publicKey)
     });
   });
+
+  describe('isValidShort(addressString)', function() {
+    it(
+      'should return true if addressString is valid short address',
+      function() {
+        const addressString = publicKey.substr(0, config.shortAddressLength);
+        expect(Address.isValidShort(addressString)).toBe(true);
+      }
+    );
+
+    it(
+      'should return false if addressString is invalid short address',
+      function() {
+        const invalidLong = publicKey.substr(0, config.shortAddressLength + 1);
+        const invalidShort = publicKey.substr(0, config.shortAddressLength - 1);
+        const invalidChar = '%' + publicKey.substr(0, config.shortAddressLength - 1);
+        expect(Address.isValidShort(invalidLong)).toBe(false);
+        expect(Address.isValidShort(invalidShort)).toBe(false);
+        expect(Address.isValidShort(invalidChar)).toBe(false);
+      }
+    );
+  });
+
+  describe('isValidFull(addressString)', function() {
+    it(
+      'should return true if addressString is valid full address',
+      function() {
+        PublicKey.isValid = function() { return true }
+        jest.setMock('../PublicKey.es6', PublicKey);
+        Address = require('../Address.es6').default;
+        expect(Address.isValidFull(publicKey)).toBe(true);
+      }
+    );
+
+    it(
+      'should return false if addressString is invalid full address',
+      function() {
+        PublicKey.isValid = function() { return false }
+        jest.setMock('../PublicKey.es6', PublicKey);
+        Address = require('../Address.es6').default;
+        expect(Address.isValidFull(publicKey)).toBe(false);
+      }
+    );
+  });
+
+  describe('isValid(addressString)', function() {
+    it(
+      'should return true if addressString is either valid short or full address',
+      function() {
+        PublicKey.isValid = function() { return true }
+        jest.setMock('../PublicKey.es6', PublicKey);
+        Address = require('../Address.es6').default;
+        const validShort = publicKey.substr(0, config.shortAddressLength);
+        expect(Address.isValid(validShort)).toBe(true);
+        expect(Address.isValid(publicKey)).toBe(true);
+      }
+    );
+
+    it(
+      'should return false if addressString is neither valid short nor full address',
+      function() {
+        PublicKey.isValid = function() { return false }
+        jest.setMock('../PublicKey.es6', PublicKey);
+        Address = require('../Address.es6').default;
+        const invalidLong = publicKey.substr(0, config.shortAddressLength + 1);
+        const invalidShort = publicKey.substr(0, config.shortAddressLength - 1);
+        const invalidChar = '%' + publicKey.substr(0, config.shortAddressLength - 1);
+        expect(Address.isValid(invalidLong)).toBe(false);
+        expect(Address.isValid(invalidShort)).toBe(false);
+        expect(Address.isValid(invalidChar)).toBe(false);
+        expect(Address.isValid(publicKey)).toBe(false);
+      }
+    );
+  });
 });
