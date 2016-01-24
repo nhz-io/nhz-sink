@@ -105,7 +105,6 @@
     "uuid": "^2.0.1",
     "validator": "^4.5.0",
     "webpack": "^1.12.9",
-    "webpack-dev-server": "^1.14.0",
-    "jest-webpack-alias": "git+https://github.com/nhz-io/jest-webpack-alias"
+    "webpack-dev-server": "^1.14.0"
   }
 }

@@ -1,3 +1,4 @@
+require('babel-register');
 var babelJest = require('babel-jest');
 var webpackAlias = require('jest-webpack-alias');
 module.exports = {
