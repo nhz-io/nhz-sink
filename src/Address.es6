@@ -17,7 +17,7 @@ export default class Address {
     return this.publicKey.substr(0, length)
   }
 
-  isValidShort(addressString) {
+  static isValidShort(addressString) {
     return(
       addressString &&
       addressString.length == config.shortAddressLength &&
