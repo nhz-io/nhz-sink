@@ -1,15 +1,18 @@
 jest.dontMock('../Address.es6');
+jest.dontMock('../../config/dist.es6');
 
 var publicKey = '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08';
 const PublicKey = jest.genMockFromModule('../PublicKey.es6')
 
-const config = { shortAddressLength:10 };
-jest.setMock('config', config);
+const config = { shortAddressLength: 10 }
 
 describe('Address', function() {
   var address, Address;
   beforeEach(function() {
     PublicKey.isValid = function() { return true }
+    config.shortAddressLength = 10;
+    config.lowercaseAddress = undefined;
+    jest.setMock('../../config/dist.es6', config);
     jest.setMock('../PublicKey.es6', PublicKey);
     Address = require('../Address.es6').default;
     address = new Address(publicKey);
@@ -36,6 +39,39 @@ describe('Address', function() {
       Address = require('../Address.es6').default;
       expect(function() { new Address }).toThrow();
     });
+
+    it('should normalize the publicKey to uppercase by default', function() {
+      const lowercase = '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08';
+      address = new Address(lowercase);
+      expect(address.publicKey.match(/[a-f]/)).toBe(null);
+    });
+
+    it('should normalize the publicKey to uppercase if lowercaseAddress is not true', function() {
+      const lowercase = '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08';
+      config.lowercaseAddress = false;
+      Address = require('../Address.es6').default;
+      address = new Address(lowercase);
+      expect(address.publicKey.match(/[a-f]/)).toBe(null);
+
+      config.lowercaseAddress = null;
+      Address = require('../Address.es6').default;
+      address = new Address(lowercase);
+      expect(address.publicKey.match(/[a-f]/)).toBe(null);
+
+      config.lowercaseAddress = undefined;
+      Address = require('../Address.es6').default;
+      address = new Address(lowercase);
+      expect(address.publicKey.match(/[a-f]/)).toBe(null);
+    });
+
+    it('should normalize the publicKey to lowercase', function() {
+      const uppercase = '9F86D081884C7D659A2FEAA0C55AD015A3BF4F1B2B0B822CD15D6C15B0F00A08';
+      config.lowercaseAddress = true;
+      Address = require('../Address.es6').default;
+      address = new Address(uppercase);
+      expect(address.publicKey.match(/[A-F]/)).toBe(null);
+    });
+
   });
 
   describe('#short(length)', function() {
