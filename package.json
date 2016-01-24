@@ -44,6 +44,7 @@
   },
   "jest": {
     "scriptPreprocessor": "<rootDir>/preprocessor.js",
+    "cacheDirectory": "/tmp/jest_cache",
     "testPathDirs": [
       "<rootDir>/src",
       "<rootDir>/dev",
