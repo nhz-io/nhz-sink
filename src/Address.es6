@@ -21,11 +21,16 @@ export default class Address {
   }
 
   constructor(publicKey) {
-    if(!PublicKey.isValid(publicKey)) {
+    if (!PublicKey.isValid(publicKey)) {
       throw new Error(`Invalid public key: ${publicKey}`);
     }
+
+    const value = config.lowercaseAddress
+                    ? publicKey.toLowerCase()
+                    : publicKey.toUpperCase();
+
     Object.defineProperty(this, 'publicKey', {
-      enumerable: true, value: publicKey
+      enumerable: true, value: value
     });
   }
 
