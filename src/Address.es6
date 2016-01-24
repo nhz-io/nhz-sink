@@ -30,4 +30,8 @@ export default class Address {
   isValidFull(addressString) {
     return PublicKey.isValid(addressString)
   }
+
+  static isValid(addressString) {
+    return Address.isValidShort(addressString) || Address.isValidFull(addressString)
+  }
 }
