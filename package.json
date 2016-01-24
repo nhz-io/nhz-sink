@@ -55,6 +55,9 @@
       "es6",
       "jsx"
     ],
+    "moduleFileExtensions": [
+      "js", "json", "es6", "jsx"
+    ],
     "unmockedModulePathPatterns": [
       "<rootDir>/node_modules/react",
       "<rootDir>/node_modules/react-dom",
