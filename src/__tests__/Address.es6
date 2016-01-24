@@ -1,6 +1,6 @@
 jest.dontMock('../Address.es6');
 
-const publicKey = '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08';
+var publicKey = '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08';
 const PublicKey = jest.genMockFromModule('../PublicKey.es6')
 
 const config = { shortAddressLength:10 };
@@ -13,6 +13,7 @@ describe('Address', function() {
     jest.setMock('../PublicKey.es6', PublicKey);
     Address = require('../Address.es6').default;
     address = new Address(publicKey);
+    publicKey = address.publicKey;
   });
 
   it('should be a class', function() {
