@@ -1,4 +1,7 @@
-# nhz-sink [![Build Status][travis-image]][travis-url] [![Coverage][coverage-image]][coverage-url] [![NPM][npm-image]][npm-url]
+# nhz-sink
+[![Build Status][travis-image]][travis-url]
+[![Coverage Status](https://coveralls.io/repos/github/nhz-io/nhz-sink/badge.svg?branch=master)](https://coveralls.io/github/nhz-io/nhz-sink?branch=master)
+[![NPM][npm-image]][npm-url]
 
 ## nhz-sink
 
@@ -39,9 +42,6 @@ https://nhz-io.github.io/nhz-sink
 
 [npm-image]: https://img.shields.io/npm/v/nhz-sink.svg?style=flat
 [npm-url]: https://www.npmjs.com/package/nhz-sink
-
-[coverage-image]: https://coveralls.io/repos/github/nhz-io/nhz-sink/badge.svg?branch=master
-[coverage-url]: https://coveralls.io/github/nhz-io/nhz-sink?branch=master
 
 [gh-pages]: https://nhz-io.github.io/nhz-sink
 
