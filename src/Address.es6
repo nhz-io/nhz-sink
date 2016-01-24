@@ -6,7 +6,7 @@ export default class Address {
     return(
       addressString &&
       addressString.length == config.shortAddressLength &&
-      addressString.match(/^[0-9a-f]$/i)
+      addressString.match(/^[0-9a-f]+$/i)
       ? true
       : false
     )
