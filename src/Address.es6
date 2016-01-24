@@ -27,7 +27,7 @@ export default class Address {
     )
   }
 
-  isValidFull(addressString) {
+  static isValidFull(addressString) {
     return PublicKey.isValid(addressString)
   }
 
