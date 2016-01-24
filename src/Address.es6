@@ -25,12 +25,10 @@ export default class Address {
       throw new Error(`Invalid public key: ${publicKey}`);
     }
 
-    const value = config.lowercaseAddress
-                    ? publicKey.toLowerCase()
-                    : publicKey.toUpperCase();
-
     Object.defineProperty(this, 'publicKey', {
-      enumerable: true, value: value
+      enumerable: true,
+      value: config.lowercaseAddress ? publicKey.toLowerCase()
+                                     : publicKey.toUpperCase()
     });
   }
 
