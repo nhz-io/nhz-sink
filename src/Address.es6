@@ -16,4 +16,14 @@ export default class Address {
   short(length = (config.shortAddressLength || 7)) {
     return this.publicKey.substr(0, length)
   }
+
+  isValidShort(addressString) {
+    return(
+      addressString &&
+      addressString.length == config.shortAddressLength &&
+      addressString.match(/^[0-9a-f]$/i)
+        ? true
+        : false
+    )
+  }  
 }
