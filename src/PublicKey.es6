@@ -1,8 +1,8 @@
 export default class PublicKey {
   static isValid(publicKey) {
-    return true;
+    return publicKey && publicKey.match(/^[0-9a-f]{64}$/i) ? true : false;
   }
-  
+
   constructor(props) {
 
   }
